@@ -4,29 +4,29 @@
 
 namespace RT
 {
-	Light TraceRay(const Scene& scene, const Ray& primaryRay, int rec_limit)
+	Light TraceRay(const Scene& scene, const Ray& primaryRay, int soft_rec_limit, int hard_rec_limit, const Config& config)
 	{
-		constexpr Light AmbientLight{ 0.01f, 0.01f, 0.01f };
-		constexpr uint32_t NumRays = 128;
-
 		auto hit = Intersect(scene, primaryRay);
 		if (hit)
 		{
 			Light light = NoLight;
-			if (rec_limit > 0)
-			{			
-				for (int i = 0; i < NumRays; ++i) {
+			if (soft_rec_limit > 0 && hard_rec_limit > 0)
+			{
+				const auto& traits = GetMaterialTraits(hit->obj->material);
+				const uint32_t numRays = std::min(traits.max_rays, config.rays / traits.rays_div);
+
+				for (int i = 0; i < numRays; ++i) {
 					auto ray = EmitRay(hit->obj->material, primaryRay, hit->hit_point);
-					light += TraceRay(scene, ray, rec_limit - 1);
+					light += TraceRay(scene, ray, soft_rec_limit - 1, hard_rec_limit - 1, config);
 				}
-				light /= NumRays;
+				light /= numRays;
 			}
-			return ModifyLight(hit->obj->material, light + AmbientLight);
+			return ModifyLight(hit->obj->material, light + config.ambient_light);
 		}
 		return NoLight;
 	}
 
-	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen, const Rect& area)
+	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen, const Rect& area, const Config& config)
 	{
 		LightMap screen_light(area, NoLight);
 
@@ -37,7 +37,7 @@ namespace RT
 				const float rx = (x + 0.5f) / screen.width;
 				const float ry = (y + 0.5f) / screen.height;
 				const Ray ray = camera.GetRay(rx, ry);
-				screen_light[{x, y}] = TraceRay(scene, ray, 2);
+				screen_light[{x, y}] = TraceRay(scene, ray, config.soft_recursion, config.hard_recursion, config);
 			}
 		}
 

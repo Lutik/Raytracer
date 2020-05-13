@@ -61,7 +61,7 @@ std::vector<std::future<RT::LightMap>> GenerateRenderTasks(const RT::Scene& scen
     const int areaHeight = screenRect.height / threads;
     for (int i = 0; i < threads; ++i) {
         const RT::Rect area{ 0, i * areaHeight, WIDTH, areaHeight };
-        tasks.push_back(std::async(std::launch::async, RT::Render, scene, camera, screenRect, area));
+        tasks.push_back(std::async(std::launch::async, RT::Render, scene, camera, screenRect, area, RT::DefaultConfig));
     }
 
     return tasks;

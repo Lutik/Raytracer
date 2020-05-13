@@ -20,4 +20,32 @@ namespace RT
 		auto visitor = [&](const auto& mat) { return ModifyLight(mat, light); };
 		return std::visit(visitor, material);
 	}
+
+
+	struct MaterialTraits
+	{
+		uint32_t max_rays;
+		uint32_t rays_div;
+		int recursion_price;
+	};
+
+	namespace Traits
+	{
+		constexpr MaterialTraits Default = { std::numeric_limits<uint32_t>::max(), 1, 1 };
+		constexpr MaterialTraits Light = { 0, 1, 1 };
+		constexpr MaterialTraits Mirror = { 1, 1, 0 };
+
+		struct Getter {
+			const MaterialTraits& operator() (const MtLight&) { return Light; }
+			const MaterialTraits& operator() (const MtMirror&) { return Mirror; }
+
+			template<class Mat>
+			const MaterialTraits& operator() (const Mat&) { return Default; }
+		};
+	}
+
+	inline const MaterialTraits& GetMaterialTraits(const Material& mat)
+	{
+		return std::visit(Traits::Getter{}, mat);
+	}
 }
