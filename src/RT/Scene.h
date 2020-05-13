@@ -22,5 +22,5 @@ namespace RT
 	};
 
 	std::optional<HitResult> Intersect(const SceneObject& obj, const Ray& ray);
-	std::optional<HitResult> Intersect(const Scene& scene, const Ray& ray);
+	std::optional<HitResult> Intersect(const Scene& scene, const Ray& ray, const SceneObject* from = nullptr);
 }

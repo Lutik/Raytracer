@@ -16,10 +16,11 @@ namespace RT
 	struct SelectClosestHit
 	{
 		const Ray& ray;
+		const SceneObject* from;
 
 		std::optional<HitResult> operator() (const std::optional<HitResult>& best, const SceneObject& obj) const
 		{
-			auto hit = Intersect(obj, ray);
+			auto hit = (&obj != from) ? Intersect(obj, ray) : std::nullopt;
 			if (!best) return hit;
 			if (!hit) return best;
 
@@ -29,8 +30,8 @@ namespace RT
 		}
 	};
 
-	std::optional<HitResult> Intersect(const Scene& scene, const Ray& ray)
+	std::optional<HitResult> Intersect(const Scene& scene, const Ray& ray, const SceneObject* from)
 	{
-		return std::accumulate(scene.begin(), scene.end(), std::optional<HitResult>{}, SelectClosestHit{ ray });
+		return std::accumulate(scene.begin(), scene.end(), std::optional<HitResult>{}, SelectClosestHit{ ray, from });
 	}
 }
