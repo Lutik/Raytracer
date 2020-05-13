@@ -10,15 +10,17 @@ namespace RT
 
 	struct Config
 	{
-		uint32_t rays;
-		int soft_recursion;
-		int hard_recursion;
-		Light ambient_light;
+		const Scene& scene;
+		const Camera& camera;
+		Rect screen;
+
+		uint32_t rays{ 256 };
+		int soft_recursion{ 2 };
+		int hard_recursion{ 8 };
+		Light ambient_light{ 0.01f, 0.01f, 0.01f };
 	};
 
-	inline constexpr Config DefaultConfig { 256, 2, 8, {0.01f, 0.01f, 0.01f} };
-
-	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen, const Rect& area, const Config& config = DefaultConfig);
+	LightMap Render(const Config& config, const Rect& area);
 
 	float CalcExposition(const LightMap& lightMap);
 }

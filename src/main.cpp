@@ -13,10 +13,11 @@ constexpr float ASPECT = static_cast<float>(WIDTH) / HEIGHT;
 namespace RT
 {
     const Scene TestScene = {
-        { Plane{ {7.0f, 0.0f, 0.0f}, -UnitVecX }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
-        { Plane{ {7.0f, 0.0f, 0.5f}, {-0.3f, 0.0f, -0.7f} }, MtMirror{} },
-        { Sphere{ {6.5f, 0.0f, 0.0f}, 0.3f }, MtDiffuse{ Color{1.0f, 0.8f, 0.0f} } },
-        { Sphere{ {6.0f, -0.7f, 0.0f}, 0.3f }, MtLight{} }
+        { Plane{ {7.0f, 0.0f, -0.2f}, -UnitVecX }, MtDiffuse{ 0.0f, 0.8f, 0.8f } },
+        { Plane{ {7.0f, 0.0f, 0.3f}, {-0.3f, 0.0f, -0.7f} }, MtMirror{} },
+        { Sphere{ {6.6f, 0.0f, -0.2f}, 0.3f }, MtDiffuse{ 1.0f, 0.8f, 0.0f } },
+        { Sphere{ {6.3f, -0.7f, -0.2f}, 0.25f }, MtLight{} },
+        { Sphere{ {6.7f, 0.9f, -0.4f}, 0.16f }, MtLight{ 1.0f, 0.0f, 1.0f } }
     };
 
     const Camera TestCamera{
@@ -26,6 +27,8 @@ namespace RT
         RT::deg2rad(45.0f),
         ASPECT
     };
+
+    const Config TestRenderCfg{ TestScene, TestCamera, SCREEN_RECT };
 }
 
 
@@ -54,20 +57,20 @@ void BlitToTarget(const RT::LightMap& lightMap, float exposition, sdl::Surface& 
 
 
 
-std::vector<std::future<RT::LightMap>> GenerateRenderTasks(const RT::Scene& scene, const RT::Camera& camera, const RT::Rect& screenRect, int threads)
+auto GenerateRenderTasks(const RT::Config& config, int threads)
 {
     std::vector<std::future<RT::LightMap>> tasks;
 
-    const int areaHeight = screenRect.height / threads;
+    const int areaHeight = config.screen.height / threads;
     for (int i = 0; i < threads; ++i) {
-        const RT::Rect area{ 0, i * areaHeight, WIDTH, areaHeight };
-        tasks.push_back(std::async(std::launch::async, RT::Render, scene, camera, screenRect, area, RT::DefaultConfig));
+        const RT::Rect area{ 0, i * areaHeight, config.screen.width, areaHeight };
+        tasks.push_back(std::async(std::launch::async, RT::Render, config, area));
     }
 
     return tasks;
 }
 
-std::vector<RT::LightMap> UpdateTasks(std::vector<std::future<RT::LightMap>>& tasks)
+auto UpdateTasks(std::vector<std::future<RT::LightMap>>& tasks)
 {
     // move finished tasks to end
     auto is_running = [](const auto& task) {
@@ -99,8 +102,7 @@ int main(int argc, char* args[])
     if (!window)
         return 0;
 
-    auto threads = GenerateRenderTasks(RT::TestScene, RT::TestCamera, SCREEN_RECT, 8);
-    sdl::Surface target{ WIDTH, HEIGHT };
+    auto threads = GenerateRenderTasks(RT::TestRenderCfg, 8);
     RT::LightMap lightMap{ SCREEN_RECT, RT::NoLight };
 
     bool quit = false;
