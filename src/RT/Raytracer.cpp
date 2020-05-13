@@ -6,7 +6,7 @@ namespace RT
 {
 	Light TraceRay(const Scene& scene, const Ray& primaryRay, int rec_limit)
 	{
-		constexpr Light AmbientLight{ 1.0f, 1.0f, 1.0f };
+		constexpr Light AmbientLight{ 0.01f, 0.01f, 0.01f };
 		constexpr uint32_t NumRays = 128;
 
 		auto hit = Intersect(scene, primaryRay);
@@ -14,8 +14,7 @@ namespace RT
 		{
 			Light light = NoLight;
 			if (rec_limit > 0)
-			{
-				
+			{			
 				for (int i = 0; i < NumRays; ++i) {
 					auto ray = EmitRay(hit->obj->material, primaryRay, hit->hit_point);
 					light += TraceRay(scene, ray, rec_limit - 1);

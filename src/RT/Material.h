@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Materials/Diffuse.h"
+#include "Materials/Light.h"
 
 namespace RT
 {
-	using Material = std::variant<MtLambert>;
+	using Material = std::variant<MtLambert, MtLight>;
 
 
 	inline Ray EmitRay(const Material& material, const Ray& incoming, const HitPoint& hit)

@@ -12,7 +12,8 @@ constexpr float ASPECT = static_cast<float>(WIDTH) / HEIGHT;
 namespace RT
 {
     const Scene TestScene = {
-        { Sphere{ {6.0f, 0.0f, 0.0f}, 0.5f }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } }
+        { Sphere{ {6.0f, 0.5f, 0.0f}, 0.3f }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
+        { Sphere{ {6.0f, -0.5f, 0.0f}, 0.4f }, MtLight{} }
     };
 
     const Camera TestCamera{
@@ -62,9 +63,7 @@ int main(int argc, char* args[])
 
     const auto lightMap = RT::Render(RT::TestScene, RT::TestCamera, SCREEN_RECT);
 
-    const float exposition = RT::CalcExposition(lightMap);
-
-    BlitToTarget(lightMap, exposition, window.surface);
+    BlitToTarget(lightMap, 0.25f, window.surface);
 
     bool quit = false;
     while (!quit)

@@ -32,6 +32,8 @@ set(SOURCES
 # Materials
     src/RT/Materials/Diffuse.h
     src/RT/Materials/Diffuse.cpp
+    src/RT/Materials/Light.h
+    src/RT/Materials/Light.cpp
 )
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
