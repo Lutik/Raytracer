@@ -9,9 +9,12 @@ project(Raytracer CXX)
 include_directories(src)
 
 set(SOURCES
+# App
     src/main.cpp
     src/sdl_wrappers.cpp
     src/sdl_wrappers.h
+
+# Raytracer
     src/RT/Types.h
     src/RT/Array2D.h
     src/RT/Math.h
@@ -39,6 +42,8 @@ set(SOURCES
     src/RT/Materials/Diffuse.cpp
     src/RT/Materials/Light.h
     src/RT/Materials/Light.cpp
+    src/RT/Materials/Mirror.h
+    src/RT/Materials/Mirror.cpp
 )
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 

@@ -2,10 +2,11 @@
 
 #include "Materials/Diffuse.h"
 #include "Materials/Light.h"
+#include "Materials/Mirror.h"
 
 namespace RT
 {
-	using Material = std::variant<MtLambert, MtLight>;
+	using Material = std::variant<MtLambert, MtLight, MtMirror>;
 
 
 	inline Ray EmitRay(const Material& material, const Ray& incoming, const HitPoint& hit)

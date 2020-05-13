@@ -7,7 +7,7 @@ namespace RT
 	Light TraceRay(const Scene& scene, const Ray& primaryRay, int rec_limit)
 	{
 		constexpr Light AmbientLight{ 0.01f, 0.01f, 0.01f };
-		constexpr uint32_t NumRays = 512;
+		constexpr uint32_t NumRays = 128;
 
 		auto hit = Intersect(scene, primaryRay);
 		if (hit)
@@ -37,7 +37,7 @@ namespace RT
 				const float rx = (x + 0.5f) / screen.width;
 				const float ry = (y + 0.5f) / screen.height;
 				const Ray ray = camera.GetRay(rx, ry);
-				screen_light[{x, y}] = TraceRay(scene, ray, 1);
+				screen_light[{x, y}] = TraceRay(scene, ray, 2);
 			}
 		}
 
