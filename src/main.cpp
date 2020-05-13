@@ -12,7 +12,8 @@ constexpr float ASPECT = static_cast<float>(WIDTH) / HEIGHT;
 namespace RT
 {
     const Scene TestScene = {
-        { Sphere{ {6.0f, 0.5f, 0.0f}, 0.3f }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
+        { Plane{ {8.0f, 0.0f, 0.0f}, -UnitVecX }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
+        { Sphere{ {6.0f, 0.5f, 0.0f}, 0.3f }, MtDiffuse{ Color{1.0f, 0.8f, 0.0f} } },
         { Sphere{ {6.0f, -0.5f, 0.0f}, 0.4f }, MtLight{} }
     };
 

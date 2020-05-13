@@ -28,6 +28,10 @@ set(SOURCES
 # Shapes
     src/RT/Shapes/Sphere.h
     src/RT/Shapes/Sphere.cpp
+    src/RT/Shapes/Plane.h
+    src/RT/Shapes/Plane.cpp
+    src/RT/Shapes/Triangle.h
+    src/RT/Shapes/Triangle.cpp
 
 # Materials
     src/RT/Materials/Diffuse.h
