@@ -13,9 +13,9 @@ constexpr float ASPECT = static_cast<float>(WIDTH) / HEIGHT;
 namespace RT
 {
     const Scene TestScene = {
-        { Plane{ {8.0f, 0.0f, 0.0f}, -UnitVecX }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
-        { Sphere{ {6.0f, 0.5f, 0.0f}, 0.3f }, MtDiffuse{ Color{1.0f, 0.8f, 0.0f} } },
-        { Sphere{ {6.0f, -0.5f, 0.0f}, 0.4f }, MtLight{} }
+        { Plane{ {7.0f, 0.0f, 0.0f}, -UnitVecX }, MtDiffuse{ Color{0.0f, 0.8f, 0.8f} } },
+        { Sphere{ {6.5f, 0.0f, 0.0f}, 0.3f }, MtDiffuse{ Color{1.0f, 0.8f, 0.0f} } },
+        { Sphere{ {6.0f, -0.7f, 0.0f}, 0.3f }, MtLight{} }
     };
 
     const Camera TestCamera{
@@ -123,7 +123,7 @@ int main(int argc, char* args[])
             for (const auto& fragment : results) {
                 RT::CopyArray2DData(fragment, lightMap);
             }
-            const float exposition = 0.25f;
+            const float exposition = 0.2f;
             BlitToTarget(lightMap, exposition, window.surface);
             window.Update();
         }

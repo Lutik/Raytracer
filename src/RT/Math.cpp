@@ -1,7 +1,9 @@
-#include "math.h"
+#include "Math.h"
 
 #include <algorithm>
 #include <random>
+
+#include "Random.h"
 
 namespace RT
 {
@@ -55,7 +57,7 @@ namespace RT
 
 	/********************************************************************/
 
-	using RandomEngine = std::mt19937;
+	using RandomEngine = xorshift32;
 
 	RandomEngine InitRNG()
 	{
@@ -67,7 +69,7 @@ namespace RT
 	float random()
 	{
 		static thread_local auto rnd_engine = InitRNG();
-		static thread_local auto distr01 = std::uniform_real_distribution<float>(0.0f, 1.0f);
+		static thread_local auto distr01 = fast_canonical_float_distribution{};
 
 		return distr01(rnd_engine);
 	}

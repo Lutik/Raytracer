@@ -16,6 +16,7 @@ set(SOURCES
     src/RT/Array2D.h
     src/RT/Math.h
     src/RT/Math.cpp
+    src/RT/Random.h
     src/RT/Shape.h
     src/RT/Material.h
     src/RT/Scene.h

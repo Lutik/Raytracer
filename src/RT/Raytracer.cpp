@@ -7,7 +7,7 @@ namespace RT
 	Light TraceRay(const Scene& scene, const Ray& primaryRay, int rec_limit)
 	{
 		constexpr Light AmbientLight{ 0.01f, 0.01f, 0.01f };
-		constexpr uint32_t NumRays = 128;
+		constexpr uint32_t NumRays = 512;
 
 		auto hit = Intersect(scene, primaryRay);
 		if (hit)
