@@ -26,13 +26,13 @@ namespace RT
 		return NoLight;
 	}
 
-	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen)
+	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen, const Rect& area)
 	{
-		LightMap screen_light(screen, NoLight);
+		LightMap screen_light(area, NoLight);
 
-		for (int y = screen.y; y < screen.y + screen.height; ++y)
+		for (int y = area.y; y < area.y + area.height; ++y)
 		{
-			for (int x = screen.x; x < screen.x + screen.width; ++x)
+			for (int x = area.x; x < area.x + area.width; ++x)
 			{
 				const float rx = (x + 0.5f) / screen.width;
 				const float ry = (y + 0.5f) / screen.height;

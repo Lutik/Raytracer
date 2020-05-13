@@ -3,6 +3,7 @@
 
 #include "RT/Raytracer.h"
 #include <algorithm>
+#include <future>
 
 constexpr int WIDTH = 800;
 constexpr int HEIGHT = 600;
@@ -50,6 +51,41 @@ void BlitToTarget(const RT::LightMap& lightMap, float exposition, sdl::Surface& 
     }
 }
 
+
+
+std::vector<std::future<RT::LightMap>> GenerateRenderTasks(const RT::Scene& scene, const RT::Camera& camera, const RT::Rect& screenRect, int threads)
+{
+    std::vector<std::future<RT::LightMap>> tasks;
+
+    const int areaHeight = screenRect.height / threads;
+    for (int i = 0; i < threads; ++i) {
+        const RT::Rect area{ 0, i * areaHeight, WIDTH, areaHeight };
+        tasks.push_back(std::async(std::launch::async, RT::Render, scene, camera, screenRect, area));
+    }
+
+    return tasks;
+}
+
+std::vector<RT::LightMap> UpdateTasks(std::vector<std::future<RT::LightMap>>& tasks)
+{
+    // move finished tasks to end
+    auto is_running = [](const auto& task) {
+        return !task.valid() || task.wait_for(std::chrono::seconds(0)) != std::future_status::ready;
+    };
+    auto ready_itr = std::partition(tasks.begin(), tasks.end(), is_running);
+
+    // retrieve results
+    std::vector<RT::LightMap> results;
+    auto get_result = [](auto& task) { return task.get(); };
+    std::transform(ready_itr, tasks.end(), std::back_inserter(results), get_result);
+
+    // erase finished tasks
+    tasks.erase(ready_itr, tasks.end());
+
+    return results;
+}
+
+
 int main(int argc, char* args[])
 {
     // Init SDL
@@ -62,9 +98,9 @@ int main(int argc, char* args[])
     if (!window)
         return 0;
 
-    const auto lightMap = RT::Render(RT::TestScene, RT::TestCamera, SCREEN_RECT);
-
-    BlitToTarget(lightMap, 0.25f, window.surface);
+    auto threads = GenerateRenderTasks(RT::TestScene, RT::TestCamera, SCREEN_RECT, 8);
+    sdl::Surface target{ WIDTH, HEIGHT };
+    RT::LightMap lightMap{ SCREEN_RECT, RT::NoLight };
 
     bool quit = false;
     while (!quit)
@@ -73,12 +109,24 @@ int main(int argc, char* args[])
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0)
         {
-            if (e.type == SDL_QUIT) {
-                quit = true;
+            if (threads.empty())
+            {
+                if (e.type == SDL_QUIT) {
+                    quit = true;
+                }
             }
         }
 
-        window.Update();
+        const auto results = UpdateTasks(threads);
+        if (!results.empty())
+        {
+            for (const auto& fragment : results) {
+                RT::CopyArray2DData(fragment, lightMap);
+            }
+            const float exposition = 0.25f;
+            BlitToTarget(lightMap, exposition, window.surface);
+            window.Update();
+        }
     }
 
     return 0;

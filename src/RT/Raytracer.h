@@ -8,7 +8,7 @@ namespace RT
 {
 	using LightMap = Array2D<Light>;
 
-	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen);
+	LightMap Render(const Scene& scene, const Camera& camera, const Rect& screen, const Rect& area);
 
 	float CalcExposition(const LightMap& lightMap);
 }
