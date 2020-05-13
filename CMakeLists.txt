@@ -7,10 +7,33 @@ endif()
 project(Raytracer CXX)
 
 include_directories(src)
+
 set(SOURCES
     src/main.cpp
     src/sdl_wrappers.cpp
+    src/sdl_wrappers.h
+    src/RT/Types.h
+    src/RT/Array2D.h
+    src/RT/Math.h
+    src/RT/Math.cpp
+    src/RT/Shape.h
+    src/RT/Material.h
+    src/RT/Scene.h
+    src/RT/Scene.cpp
+    src/RT/Camera.h
+    src/RT/Camera.cpp
+    src/RT/Raytracer.h
+    src/RT/Raytracer.cpp
+
+# Shapes
+    src/RT/Shapes/Sphere.h
+    src/RT/Shapes/Sphere.cpp
+
+# Materials
+    src/RT/Materials/Diffuse.h
+    src/RT/Materials/Diffuse.cpp
 )
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 add_executable(Raytracer WIN32 ${SOURCES})
 
